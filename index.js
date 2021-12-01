@@ -184,7 +184,7 @@ const dataToChartJs = (res, start_date, end_date, grp) => {
         }
         maps[key] = normalizers[grp](maps[key], metrics, startMoment, endMoment);
     }
-    return {maps, maxValue, labels: _.keys(maps['all'])};
+    return {datasets: maps, maxValue, labels: _.keys(maps['all'])};
 }
 
 exports.default = dataToChartJs;
