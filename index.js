@@ -178,13 +178,15 @@ const dataToChartJs = (res, start_date, end_date, grp) => {
         }
     }
 
+    const labels = _.keys(maps['all']);
+
     while (key = keys.shift()) {
         if (!maps.hasOwnProperty(key)) {
             maps[key] = {};
         }
         maps[key] = normalizers[grp](maps[key], metrics, startMoment, endMoment);
     }
-    return {datasets: maps, maxValue, labels: _.keys(maps['all'])};
+    return {datasets: maps, maxValue, labels };
 }
 
 exports.default = dataToChartJs;
