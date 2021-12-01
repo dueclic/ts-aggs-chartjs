@@ -1,0 +1,27 @@
+{
+  "name": "ts-aggs-chartjs",
+  "version": "1.0.0",
+  "description": "WIP",
+  "main": "index.js",
+  "directories": {
+    "example": "examples"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dueclic/ts-aggs-chartjs.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dueclic/ts-aggs-chartjs/issues"
+  },
+  "homepage": "https://github.com/dueclic/ts-aggs-chartjs#readme",
+  "dependencies": {
+    "moment": "^2.29.1",
+    "underscore": "^1.13.1"
+  }
+}
