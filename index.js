@@ -10,6 +10,30 @@ const  startOfWeek = (m, weekstart) => {
     return moment(m).subtract( (diff < 0) ? diff + 7 : diff, 'days');
 }
 
+const getLabels = (res) => {
+    let keys = _.keys(res);
+
+    keys = _.map(keys, function(k) {
+        return parseInt(k, 10);
+    }).sort();
+
+    return keys;
+};
+
+const toChartView = (keys, res) => {
+
+    let key, dataset = {
+        data: []
+    };
+
+    for (let i = 0; i < keys.length; i++) {
+        key = keys[i];
+        dataset['data'].push(res[key]);
+    }
+
+    return dataset;
+}
+
 const normalizers = {
     h: function(map, oneHour, startMoment, endMoment) {
         const ndays = endMoment.diff(startMoment, 'days') + 1;
@@ -24,7 +48,7 @@ const normalizers = {
             i++;
         }
 
-        return this.toChartView(map);
+        return map;
     },
 
     d: function(map, oneDay, startMoment, endMoment) {
@@ -40,7 +64,7 @@ const normalizers = {
             i++;
         }
 
-        return this.toChartView(map);
+        return map;
     },
 
     w: function(map, oneDay, startMoment, endMoment) {
@@ -63,7 +87,7 @@ const normalizers = {
             d.add(7*86400, 'seconds');
         }
 
-        return this.toChartView(map);
+        return map;
     },
 
     m: function(map, oneDay, startMoment, endMoment) {
@@ -106,29 +130,7 @@ const normalizers = {
             m++;
         }
 
-        return this.toChartView(map);
-    },
-
-    toChartView: function(res) {
-
-        let keys = _.keys(res)
-            , key
-            , out = {
-            data: []
-        }
-
-        keys = _.map(keys, function(k) {
-            return parseInt(k, 10);
-        }).sort();
-
-        const labels = [... keys ];
-
-        while (key = keys.shift()) {
-            out['data'].push(res[key]);
-            delete res[key];
-        }
-
-        return {labels, dataset: out};
+        return map;
     }
 }
 
@@ -148,8 +150,9 @@ const dataToChartJs = (res, start_date, end_date, grp) => {
         maxValue = null,
         ts = 0,
         rCounter = 0,
-        maps = {},
-        keys = [];
+        datasets = {},
+        keys = [],
+        labels = [];
 
     endMoment.hours(23).minutes(59).minutes(59).milliseconds(999);
 
@@ -172,24 +175,30 @@ const dataToChartJs = (res, start_date, end_date, grp) => {
             rCounter = 0;
         } else {
             key = keys[rCounter-1];
-            if (!maps.hasOwnProperty(key)) {
-                maps[key] = {};
+            if (!datasets.hasOwnProperty(key)) {
+                datasets[key] = {};
             }
-            maps[key][ts] = val;
+            datasets[key][ts] = val;
             rCounter++;
         }
     }
 
     while (key = keys.shift()) {
-        if (!maps.hasOwnProperty(key)) {
-            maps[key] = {};
+        if (!datasets.hasOwnProperty(key)) {
+            datasets[key] = {};
         }
-        maps[key] = normalizers[grp](maps[key], metrics, startMoment, endMoment);
+
+        const dataset = normalizers[grp](datasets[key], metrics, startMoment, endMoment);
+        if (key === 'all'){
+            labels = getLabels(datasets['all']);
+        }
+        datasets[key] = toChartView(labels, dataset);
     }
+
     return {
-        datasets: _.mapObject(maps, map => map.dataset),
+        datasets,
         maxValue,
-        labels: maps['all'].labels
+        labels
     };
 }
 
