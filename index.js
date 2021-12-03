@@ -15,7 +15,7 @@ const getLabels = (res) => {
     }).sort();
 };
 
-const toChartView = (keys, res, cb) => {
+const toChartView = (keys, res, status, cb) => {
 
     let key, dataset = {
         data: []
@@ -26,7 +26,7 @@ const toChartView = (keys, res, cb) => {
         dataset['data'].push(res[key]);
     }
 
-    return cb ? cb(dataset) : dataset;
+    return cb ? cb(dataset, status) : dataset;
 }
 
 const normalizers = {
@@ -190,7 +190,7 @@ export const dataToChartJs = (res, start_date, end_date, grp, cb) => {
             labels = getLabels(dataset);
         }
         datasets.push(
-            toChartView(labels, dataset, cb)
+            toChartView(labels, dataset, key, cb)
         );
     }
 

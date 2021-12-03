@@ -8,8 +8,9 @@ const startTime = performance.now()
 
 import {dataToChartJs} from "../index.js";
 
-const data = dataToChartJs(jsonData, '2021-01-01', '2021-12-02', 'h', (data) => ({
-    ...data,
+const data = dataToChartJs(jsonData, '2021-01-01', '2021-12-02', 'h', (dataset, key) => ({
+    ...dataset,
+    key,
     foo: 1
 }));
 
