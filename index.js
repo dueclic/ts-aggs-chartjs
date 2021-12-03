@@ -1,23 +1,18 @@
 const moment = require("moment");
-const _ = require("underscore");
 
-const  startOfWeek = (m, weekstart) => {
+const startOfWeek = (m, weekstart) => {
     if (weekstart === undefined) {
         weekstart = 0;
     }
     const mws = weekstart + 1 > 6 ? 0 : weekstart + 1,
         diff = m.day() - mws;
-    return moment(m).subtract( (diff < 0) ? diff + 7 : diff, 'days');
+    return moment(m).subtract((diff < 0) ? diff + 7 : diff, 'days');
 }
 
 const getLabels = (res) => {
-    let keys = _.keys(res);
-
-    keys = _.map(keys, function(k) {
+    return Object.keys(res).map(function (k) {
         return parseInt(k, 10);
     }).sort();
-
-    return keys;
 };
 
 const toChartView = (keys, res) => {
@@ -35,7 +30,7 @@ const toChartView = (keys, res) => {
 }
 
 const normalizers = {
-    h: function(map, oneHour, startMoment, endMoment) {
+    h: function (map, oneHour, startMoment, endMoment) {
         const ndays = endMoment.diff(startMoment, 'days') + 1;
         let ts = startMoment.valueOf() / 1000
             , i = 0;
@@ -51,7 +46,7 @@ const normalizers = {
         return map;
     },
 
-    d: function(map, oneDay, startMoment, endMoment) {
+    d: function (map, oneDay, startMoment, endMoment) {
         const ndays = endMoment.diff(startMoment, 'days') + 1;
         let ts = startMoment.valueOf() / 1000
             , i = 0;
@@ -67,7 +62,7 @@ const normalizers = {
         return map;
     },
 
-    w: function(map, oneDay, startMoment, endMoment) {
+    w: function (map, oneDay, startMoment, endMoment) {
         const weekstartMoment = startOfWeek(startMoment),
             d = moment(weekstartMoment);
 
@@ -84,13 +79,13 @@ const normalizers = {
             if (!map.hasOwnProperty(grid_m)) {
                 map[grid_m] = 0;
             }
-            d.add(7*86400, 'seconds');
+            d.add(7 * 86400, 'seconds');
         }
 
         return map;
     },
 
-    m: function(map, oneDay, startMoment, endMoment) {
+    m: function (map, oneDay, startMoment, endMoment) {
         const monthstartMoment = moment(startMoment).date(1)
             , d = moment(monthstartMoment)
             , year = d.year();
@@ -108,7 +103,7 @@ const normalizers = {
                 return 29;
             } else if (m === 1) {
                 return 28;
-            } else if ((m<7&&m%2===0) || (m>=7&&m%2===1)) {
+            } else if ((m < 7 && m % 2 === 0) || (m >= 7 && m % 2 === 1)) {
                 return 31;
             } else {
                 return 30;
@@ -126,7 +121,7 @@ const normalizers = {
             if (!map.hasOwnProperty(grid_m)) {
                 map[grid_m] = 0;
             }
-            d.add(daysInMonth(m, year)*oneDay,'seconds');
+            d.add(daysInMonth(m, year) * oneDay, 'seconds');
             m++;
         }
 
@@ -135,7 +130,7 @@ const normalizers = {
 }
 
 const getMetrics = (grouping) => {
-    if (grouping === 'h'){
+    if (grouping === 'h') {
         return 3600;
     }
     return 86400;
@@ -174,7 +169,7 @@ const dataToChartJs = (res, start_date, end_date, grp) => {
         } else if (val === -1) {
             rCounter = 0;
         } else {
-            key = keys[rCounter-1];
+            key = keys[rCounter - 1];
             if (!datasets.hasOwnProperty(key)) {
                 datasets[key] = {};
             }
@@ -189,7 +184,7 @@ const dataToChartJs = (res, start_date, end_date, grp) => {
         }
 
         const dataset = normalizers[grp](datasets[key], metrics, startMoment, endMoment);
-        if (key === 'all'){
+        if (key === 'all') {
             labels = getLabels(datasets['all']);
         }
         datasets[key] = toChartView(labels, dataset);

@@ -1,6 +1,6 @@
 {
   "name": "ts-aggs-chartjs",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "WIP",
   "main": "index.js",
   "directories": {
@@ -21,7 +21,6 @@
   },
   "homepage": "https://github.com/dueclic/ts-aggs-chartjs#readme",
   "dependencies": {
-    "moment": "^2.29.1",
-    "underscore": "^1.13.1"
+    "moment": "^2.29.1"
   }
 }
