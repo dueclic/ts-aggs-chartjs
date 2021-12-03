@@ -15,7 +15,7 @@ const getLabels = (res) => {
     }).sort();
 };
 
-const toChartView = (keys, res) => {
+const toChartView = (keys, res, cb) => {
 
     let key, dataset = {
         data: []
@@ -26,7 +26,7 @@ const toChartView = (keys, res) => {
         dataset['data'].push(res[key]);
     }
 
-    return dataset;
+    return cb ? cb(dataset) : dataset;
 }
 
 const normalizers = {
@@ -136,7 +136,7 @@ const getMetrics = (grouping) => {
     return 86400;
 }
 
-export const dataToChartJs = (res, start_date, end_date, grp) => {
+export const dataToChartJs = (res, start_date, end_date, grp, cb) => {
 
     let startMoment = moment(start_date),
         endMoment = moment(end_date),
@@ -145,9 +145,10 @@ export const dataToChartJs = (res, start_date, end_date, grp) => {
         maxValue = null,
         ts = 0,
         rCounter = 0,
-        datasets = {},
+        data = {},
         keys = [],
-        labels = [];
+        labels = [],
+        datasets = [];
 
     endMoment.hours(23).minutes(59).minutes(59).milliseconds(999);
 
@@ -170,24 +171,27 @@ export const dataToChartJs = (res, start_date, end_date, grp) => {
             rCounter = 0;
         } else {
             key = keys[rCounter - 1];
-            if (!datasets.hasOwnProperty(key)) {
-                datasets[key] = {};
+            if (!data.hasOwnProperty(key)) {
+                data[key] = {};
             }
-            datasets[key][ts] = val;
+            data[key][ts] = val;
             rCounter++;
         }
     }
 
     while (key = keys.shift()) {
-        if (!datasets.hasOwnProperty(key)) {
-            datasets[key] = {};
+
+        if (!data.hasOwnProperty(key)) {
+            data[key] = {};
         }
 
-        const dataset = normalizers[grp](datasets[key], metrics, startMoment, endMoment);
+        const dataset = normalizers[grp](data[key], metrics, startMoment, endMoment);
         if (key === 'all') {
-            labels = getLabels(datasets['all']);
+            labels = getLabels(dataset);
         }
-        datasets[key] = toChartView(labels, dataset);
+        datasets.push(
+            toChartView(labels, dataset, cb)
+        );
     }
 
     return {
