@@ -1,9 +1,13 @@
-const { performance } = require('perf_hooks');
+import { readFile } from 'fs/promises';
+import { performance } from 'perf_hooks';
+
+const jsonData = JSON.parse(await readFile(new URL('../data/example4.json', import.meta.url)));
+
 
 const startTime = performance.now()
 
-const {dataToChartJs} = require("../index");
-const data = dataToChartJs(require('../data/example4.json'),'2021-01-01', '2021-12-02', 'h');
+import {dataToChartJs} from "../index.js";
+const data = dataToChartJs(jsonData,'2021-01-01', '2021-12-02', 'h');
 
 const endTime = performance.now()
 

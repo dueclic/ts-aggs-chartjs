@@ -1,4 +1,4 @@
-const moment = require("moment");
+import moment from "moment";
 
 const startOfWeek = (m, weekstart) => {
     if (weekstart === undefined) {
@@ -136,7 +136,7 @@ const getMetrics = (grouping) => {
     return 86400;
 }
 
-const dataToChartJs = (res, start_date, end_date, grp) => {
+export const dataToChartJs = (res, start_date, end_date, grp) => {
 
     let startMoment = moment(start_date),
         endMoment = moment(end_date),
@@ -196,6 +196,3 @@ const dataToChartJs = (res, start_date, end_date, grp) => {
         labels
     };
 }
-
-exports.default = dataToChartJs;
-exports.dataToChartJs = dataToChartJs;

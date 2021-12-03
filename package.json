@@ -1,8 +1,9 @@
 {
   "name": "ts-aggs-chartjs",
-  "version": "1.0.6",
-  "description": "WIP",
+  "version": "1.0.7",
+  "description": "Map turboSMTP aggregate data to ChartJS",
   "main": "index.js",
+  "type": "module",
   "directories": {
     "example": "examples"
   },
